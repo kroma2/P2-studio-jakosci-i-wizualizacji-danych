@@ -1,0 +1,133 @@
+=== PRZED CZYSZCZENIEM ===
+Plik: california_housing_projekt2.csv
+Wiersze: 20840
+Kolumny: 9
+
+Profil kolumn:
+               dtype  missing  missing_pct  unique
+MedInc           str      120         0.58   12884
+HouseAge         str      120         0.58      59
+AveRooms     float64      120         0.58   19279
+AveBedrms    float64      120         0.58   14162
+Population       str      120         0.58    3890
+AveOccup     float64      120         0.58   18738
+Latitude     float64      120         0.58     863
+Longitude    float64      120         0.58     845
+MedHouseVal      str      120         0.58    3844
+
+Statystyki liczbowe po odczytaniu liczb z tekstu (tabela robocza bez zmian):
+             MedInc     HouseAge      AveRooms     AveBedrms    Population      AveOccup      Latitude     Longitude   MedHouseVal
+count  20714.000000  20714.00000  20720.000000  20720.000000  20714.000000  20720.000000  20720.000000  20720.000000  20714.000000
+mean       3.904629     28.59665      5.823344      1.095337   1427.058028      6.604425     35.660349   -119.417825      2.066609
+std        2.293595     12.60471     13.313239      0.474564   1137.067827    116.428390      2.502957      7.088363      1.157445
+min       -3.000000     -5.00000     -2.000000     -1.000000   -100.000000     -4.000000     32.540000   -124.350000     -2.000000
+25%        2.562500     18.00000      4.441027      1.006058    786.250000      2.429279     33.930000   -121.790000      1.194250
+50%        3.537150     29.00000      5.230702      1.048780   1167.000000      2.818693     34.260000   -118.490000      1.796500
+75%        4.744525     37.00000      6.052096      1.099476   1726.000000      3.282376     37.720000   -118.000000      2.647000
+max       58.500390     52.00000    553.445455     34.066667  35682.000000   4849.000000     95.000000    190.000000      5.000010
+
+Nadmiarowe pełne duplikaty: 200
+Wiersze biorące udział w duplikacie: 400
+
+Braki:
+- MedInc: 120
+- HouseAge: 120
+- AveRooms: 120
+- AveBedrms: 120
+- Population: 120
+- AveOccup: 120
+- Latitude: 120
+- Longitude: 120
+- MedHouseVal: 120
+
+Nieliczbowe wpisy (tabela bez zmian):
+- MedInc: 6 komórek; -- (1), do sprawdzenia (1), ? (1), error (1), nieznane (1), brak (1)
+- HouseAge: 6 komórek; brak (1), error (1), -- (1), do sprawdzenia (1), nieznane (1), ? (1)
+- Population: 6 komórek; do sprawdzenia (1), ? (1), error (1), brak (1), nieznane (1), -- (1)
+- MedHouseVal: 6 komórek; ? (1), do sprawdzenia (1), nieznane (1), -- (1), brak (1), error (1)
+
+Wartości poza zakresem (tabela bez zmian):
+- MedInc od 0 do bez górnej granicy: 10 wierszy
+- HouseAge od 1 do 52: 10 wierszy
+- AveRooms od 0 do bez górnej granicy: 10 wierszy
+- AveBedrms od 0 do bez górnej granicy: 10 wierszy
+- Population od 0 do bez górnej granicy: 10 wierszy
+- AveOccup od 0 do bez górnej granicy: 10 wierszy
+- Latitude od 32 do 42: 10 wierszy
+- Longitude od -124.5 do -114: 10 wierszy
+- MedHouseVal od 0 do bez górnej granicy: 10 wierszy
+
+Wartości odstające IQR (tabela bez zmian, wiersze zostają):
+- IQR dla MedInc, współczynnik 1.5: granice od -0.7105 do 8.018, wartości odstających: 706. Dane nie zostały zmienione.
+- IQR dla HouseAge, współczynnik 1.5: granice od -10.5 do 65.5, wartości odstających: 0. Dane nie zostały zmienione.
+- IQR dla AveRooms, współczynnik 1.5: granice od 2.024 do 8.469, wartości odstających: 542. Dane nie zostały zmienione.
+- IQR dla AveBedrms, współczynnik 1.5: granice od 0.8659 do 1.24, wartości odstających: 1439. Dane nie zostały zmienione.
+- IQR dla Population, współczynnik 1.5: granice od -623.4 do 3136, wartości odstających: 1205. Dane nie zostały zmienione.
+- IQR dla AveOccup, współczynnik 1.5: granice od 1.15 do 4.562, wartości odstających: 747. Dane nie zostały zmienione.
+- IQR dla Latitude, współczynnik 1.5: granice od 28.25 do 43.41, wartości odstających: 10. Dane nie zostały zmienione.
+- IQR dla Longitude, współczynnik 1.5: granice od -127.5 do -112.3, wartości odstających: 10. Dane nie zostały zmienione.
+- IQR dla MedHouseVal, współczynnik 1.5: granice od -0.9849 do 4.826, wartości odstających: 1086. Dane nie zostały zmienione.
+
+=== PIPELINE ===
+1. Usuń pełne duplikaty.
+2. W MedInc, HouseAge, Population i MedHouseVal zamień tekst typu ?, error, brak na braki.
+3. Uzupełnij braki medianą tylko w kolumnach, które nadal mają puste komórki.
+4. Zakres i IQR tylko opisz. Wierszy nie usuwaj: ujemna liczba albo współrzędna poza Kalifornią
+   zostaje w pliku, bo sam raport nie jest decyzją o kasowaniu.
+
+Komórki, które już były liczbą:
+- MedInc: bez zmian poza brakami: True
+- HouseAge: bez zmian poza brakami: True
+- Population: bez zmian poza brakami: True
+- MedHouseVal: bez zmian poza brakami: True
+- AveRooms: bez zmian poza brakami: True
+- AveBedrms: bez zmian poza brakami: True
+- AveOccup: bez zmian poza brakami: True
+- Latitude: bez zmian poza brakami: True
+- Longitude: bez zmian poza brakami: True
+
+Komórki, które już były liczbą:
+- MedInc: bez zmian poza brakami: True
+- HouseAge: bez zmian poza brakami: True
+- AveRooms: bez zmian poza brakami: True
+- AveBedrms: bez zmian poza brakami: True
+- Population: bez zmian poza brakami: True
+- AveOccup: bez zmian poza brakami: True
+- Latitude: bez zmian poza brakami: True
+- Longitude: bez zmian poza brakami: True
+- MedHouseVal: bez zmian poza brakami: True
+
+=== DZIENNIK ===
+2026-11-17 12:27:57 | Usunięto dokładne duplikaty: 200 (przed: 20840, po: 20640, zmiany: 200)
+2026-11-17 12:27:57 | Zamieniono nieliczbowe wpisy na braki w kolumnach ['MedInc', 'HouseAge', 'Population', 'MedHouseVal']: 24 komórek (przed: 20640, po: 20640, zmiany: 24)
+2026-11-17 12:27:57 | Uzupełniono braki medianą w kolumnach ['MedInc', 'HouseAge', 'AveRooms', 'AveBedrms', 'Population', 'AveOccup', 'Latitude', 'Longitude', 'MedHouseVal']: 1104 komórek (przed: 20640, po: 20640, zmiany: 1104)
+
+=== PO CZYSZCZENIU ===
+Wiersze: 20640
+Kolumny: 9
+Braki łącznie: 0
+
+Profil kolumn:
+               dtype  missing  missing_pct  unique
+MedInc       float64        0          0.0   12878
+HouseAge     float64        0          0.0      53
+AveRooms     float64        0          0.0   19280
+AveBedrms    float64        0          0.0   14163
+Population   float64        0          0.0    3884
+AveOccup     float64        0          0.0   18739
+Latitude     float64        0          0.0     863
+Longitude    float64        0          0.0     845
+MedHouseVal  float64        0          0.0    3838
+
+Statystyki liczbowe:
+             MedInc      HouseAge      AveRooms     AveBedrms    Population      AveOccup      Latitude     Longitude   MedHouseVal
+count  20640.000000  20640.000000  20640.000000  20640.000000  20640.000000  20640.000000  20640.000000  20640.000000  20640.000000
+mean       3.902705     28.618944      5.824937      1.095338   1423.566715      6.618029     35.654078   -119.412673      2.064785
+std        2.290795     12.567781     13.338528      0.475374   1129.811012    116.653584      2.500757      7.099761      1.153626
+min       -3.000000     -5.000000     -2.000000     -1.000000   -100.000000     -4.000000     32.540000   -124.350000     -2.000000
+25%        2.567300     18.000000      4.444397      1.006329    789.000000      2.432466     33.940000   -121.790000      1.200000
+50%        3.535700     29.000000      5.230373      1.048756   1166.000000      2.818487     34.260000   -118.490000      1.797000
+75%        4.738100     37.000000      6.047952      1.099091   1721.000000      3.279945     37.710000   -118.010000      2.640250
+max       58.500390     52.000000    553.445455     34.066667  35682.000000   4849.000000     95.000000    190.000000      5.000010
+
+Poza zakresem i odstające wartości nadal są w tabeli.
