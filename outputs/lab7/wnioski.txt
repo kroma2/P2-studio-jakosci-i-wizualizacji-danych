@@ -1,0 +1,64 @@
+=== LAB 7. WYKRESY PRZED I PO ===
+Plik: california_housing_projekt2.csv
+Wiersze surowe: 20840
+Wiersze po czyszczeniu: 20640
+Tekst zamieniony na braki na kopii do wykresu „przed”: 24 komórek.
+Ta kopia nie zapisuje się z powrotem do pliku surowego.
+
+Pipeline „po” jest ten sam co w lab 6:
+1. Usuń pełne duplikaty.
+2. W MedInc, HouseAge, Population i MedHouseVal zamień tekst typu ?, error, brak na braki.
+3. Uzupełnij braki medianą tylko w kolumnach, które nadal mają puste komórki.
+4. Zakres i IQR nie kasują wierszy. Ujemna liczba i współrzędna poza Kalifornią zostają.
+
+Sprawdzenie typów. Wykres w tych próbach nie powstaje:
+- surowy MedInc, w pliku jest tekst: Kolumna MedInc nie jest liczbowa, ma typ object. Histogram rysuje się z liczb. Wybierz kolumnę liczbową albo zamień tekst na liczby.
+- kolumna bez zmienności: Kolumna Stala ma mniej niż dwie różne wartości. Z takiej kolumny nie powstanie czytelny wykres ani korelacja. Wybierz kolumnę, która się zmienia.
+- wykres punktowy z jedną kolumną: Wykres punktowy potrzebuje dwóch różnych kolumn: oś X i oś Y.
+
+Zestaw plików:
+- histogram_przed_po.png
+- punktowy_przed_po.png
+- pudelkowy_przed_po.png
+- slupkowy_przed_po.png
+- korelacja_przed_po.png
+
+Osie i tytuły:
+- MedInc: Mediana dochodu (10 tys. USD)
+- MedHouseVal: Mediana wartości domu (100 tys. USD)
+- Latitude: Szerokość geograficzna
+- Longitude: Długość geograficzna
+
+=== CO WIDAĆ ===
+Histogram wartości domu ma skupienie przy prawej krawędzi, około 5. To górny próg tego zbioru, a nie skutek dochodu. Kilka wartości poniżej zera zostaje, bo reguła zakresu ich nie usuwa. Po czyszczeniu słupki są niższe tam, gdzie zniknęły duplikaty, a środek może lekko urosnąć, bo mediana wchodzi w puste komórki.
+
+Wykres punktowy: dochód na osi X, wartość domu na osi Y. Poza ramką zostaje 152 punktów przed czyszczeniem i 151 po czyszczeniu. Ramka jest po to, żeby skrajny dochód nie spłaszczył chmury. Te punkty są w tabeli i wchodzą do r.
+
+Wykres pudełkowy wartości domu pokazuje medianę, kwartyle i punkty poza wąsami, w tym wartości ujemne. Pudełko nie mówi, skąd się wzięła cena.
+
+Wykres słupkowy grupuje dochód w te same przedziały przed i po. Pierwszy kosz, od -4 do 0, ma przed czyszczeniem 10 wierszy. To błędne liczby, w tym dochody poniżej zera, a nie grupa gospodarstw. Ostatni kosz miesza wysokie dochody ze skrajnymi. Średnia w koszu opisuje ten plik. Nie jest mechanizmem ceny.
+
+=== KORELACJA ===
+MedInc i MedHouseVal przed czyszczeniem: r = 0.565, n = 20588.
+MedInc i MedHouseVal po czyszczeniu: r = 0.560, n = 20640.
+Przed czyszczeniem r liczy się na wierszach, w których obie kolumny są liczbą. Po czyszczeniu braki są już medianą, więc do pary wchodzi więcej wierszy. Zmiana r bierze się z tej różnicy zbioru i z usuniętych duplikatów. Nie jest odkryciem przyczyny.
+
+Najsilniejsze pary po czyszczeniu, liczone Pearsonem:
+- MedInc i MedHouseVal: r = 0.560, n = 20640.
+  Wyższy dochód częściej siedzi w tym pliku obok wyższej wartości domu. To nie rozstrzyga, czy dochód podnosi cenę, czy droższe bloki mają mieszkańców o wyższym dochodzie, ani czy obie liczby zależą od lokalizacji.
+- HouseAge i Population: r = -0.294, n = 20640.
+  Starsze bloki bywają tu mniej liczne. To współwystępowanie w tabeli, nie mechanizm, w którym wiek domu zmniejsza liczbę mieszkańców.
+- Latitude i Longitude: r = -0.225, n = 20640.
+  To współrzędne tego samego punktu. r nie znaczy, że szerokość wywołuje długość.
+- AveRooms i AveBedrms: r = 0.151, n = 20640.
+  Obie kolumny liczą pomieszczenia w tym samym bloku. Związek bierze się ze sposobu policzenia zmiennych, a nie z wpływu jednej na drugą.
+- Latitude i MedHouseVal: r = -0.121, n = 20640.
+
+Latitude i Longitude na całej tabeli po czyszczeniu: r = -0.225.
+To samo r tylko dla współrzędnych w granicach Kalifornii (szerokość 32–42, długość -124.5–-114): r = -0.918, n = 20620.
+To przeliczenie nie jest czyszczeniem i nie zmienia wykresu ani pliku. Pokazuje, że kilka punktów daleko poza stanem spłaszcza współczynnik. Nawet r bliskie -1 nie znaczy, że jedna współrzędna jest przyczyną drugiej ani przyczyną ceny.
+
+AveOccup ma w tym pliku prawie zerowe r z wartością domu. W kolumnie siedzą skrajne liczby, rzędu tysięcy osób na dom. Pearson jest na nie wrażliwy. Zerowe r nie jest wnioskiem, że zagęszczenie w rzeczywistości nie łączy się z ceną.
+
+=== CZEGO TU NIE MA ===
+Żaden wykres ani współczynnik z tego zestawu nie pokazuje przyczyny. Korelacja i nachylenie chmury mówią tylko, które kolumny w tym pliku zmieniają się razem. Dochód i cena mogą iść razem, bo tak wygląda okolica, bo tak zebrano dane albo z obu tych powodów naraz. Tego z samego r nie widać. Mediana wstawiona w braki dosuwa puste komórki do środka rozkładu i może przesunąć r bez nowego mechanizmu.
